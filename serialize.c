@@ -58,3 +58,20 @@ void init_serialized_buffer_of_size(ser_buff_t **b, int size){
     
     (*b)->next = 0;
 }
+
+void serialize_buffer_skip(ser_buff_t *buffer, int size){
+    int available_space = buffer->size - buffer->next;
+
+    if(available_space >= size){
+        buffer->next += size;
+        return;
+    }
+
+    while(available_space < size){
+        buffer->size = buffer->size * 2;
+        available_space = buffer->size - buffer->next;
+    }   
+
+    buffer->b = realloc(buffer->b, buffer->size);    
+    buffer->next += size;
+}
